@@ -1,0 +1,9 @@
+.errorField {
+    text-align: left;
+}
+.errorContainer {
+    cursor: pointer;
+    border: 1px solid darkred;
+    padding: 10px;
+    margin: 30px;
+}

@@ -32,7 +32,7 @@ interface GameState {
     availableTrades: Trade[];
     discardPile: any[];
     players: Player[];
-    yourHand: HandCard[];
+    yourHand: Card[];
 }
 
 interface Player {
@@ -53,6 +53,7 @@ interface Field {
 interface Card {
     id: string;
     type: string;
+    totalNumberOfType: number;
     exchangeMap: ExchangeMapEntry[];
 }
 
@@ -61,12 +62,6 @@ interface ExchangeMapEntry {
     value: number;
 }
 
-interface HandCard {
-    id: string;
-    type: string;
-    exchangeMap: ExchangeMapEntry[];
-    firstCard: boolean;
-}
 
 interface Trade {
     initiatorId: string;
@@ -76,9 +71,9 @@ interface Trade {
 }
 
 // Hent spillstatus
-async function fetchGameState(gameName: string): Promise<GameState> {
+async function fetchGameState(gameName: string, playerId: string): Promise<GameState> {
     const response = await axiosClient.get(`api/game`, {
-        params: { gameName },
+        params: { gameName, playerId },
     });
     return response.data;
 }
@@ -88,50 +83,157 @@ async function takeTurn(gameState: GameState, playerId: string, playerName: stri
     
     if (gameState.currentPhase === 'Planting') {
         console.log(`Spiller ${playerName} kan plante bønner.`);
-        await handlePlanting(gameState, playerId);
-        gameState = await fetchGameState(gameName);
+        await handlePlantingFirstCard(gameState, playerId, playerName);
     }
-
-    if (gameState.currentPhase === 'Trading') {
-        console.log(`Spiller ${playerName} kan handle.`);
-        await handleTrading(gameState, playerId);
+    else if (gameState.currentPhase === 'PlantingOptional') {
+        console.log(`Spiller ${playerName} kan plante bønner.`);
+        await handlePlantingOptional(gameState, playerId, playerName);
+    }
+    else if (gameState.currentPhase === 'Trading') {
+        console.log(`Spiller ${playerName} kan trade.`);
+        await handleTrading(gameState, playerId, playerName);
     }  
-
-    if (gameState.currentPhase === 'Harvesting') {
-        console.log(`Spiller ${playerName} kan høste bønner.`);
-        await handleHarvesting(gameState, playerId);
+    else if (gameState.currentPhase === 'TradePlanting') {
+        console.log(`Spiller ${playerName} kan plante etter trading.`);
+        await handleTradePlanting(gameState, playerId, playerName);
+        await plantDrawnCards(gameState, playerId, playerName);
     } else {
         console.log(`Fase ${gameState.currentPhase} støttes ikke ennå.`);
     }
-   
 }
 
 // Håndter trading
-async function handleTrading(gameState: GameState, playerId: string): Promise<void> {
-    for (const trade of gameState.availableTrades) {
-        if (trade.cardTypesWanted.includes(gameState.yourHand[0]?.type)) {
-            console.log(`Godtar handel for korttype ${gameState.yourHand[0]?.type}.`);
-            await acceptTrade(gameState.name, playerId, trade.negotiationId);
-            return;
-        }
-    }
-    console.log('Ingen relevante handler tilgjengelige.');
+async function handleTrading(gameState: GameState, playerId: string, playerName: string): Promise<void> {
+    // for (const trade of gameState.availableTrades) {
+    //     if (trade.cardTypesWanted.includes(gameState.yourHand[0]?.type)) {
+    //         console.log(`Godtar handel for korttype ${gameState.yourHand[0]?.type}.`);
+    //         await acceptTrade(gameState.name, playerId, trade.negotiationId);
+    //         return;
+    //     }
+    // }
+    // console.log('Ingen relevante handler tilgjengelige.');
+    await endTrading(gameState.name, playerId);
 }
 
 // Håndter planting
-async function handlePlanting(gameState: GameState, playerId: string): Promise<void> {
-    for (const card of gameState.yourHand) {
-        const targetField = gameState.players
-            .find(p => p.name === playerId)
+async function handlePlantingFirstCard(gameState: GameState, playerId: string, playerName: string): Promise<void> {
+    
+    if(gameState.yourHand.length === 0)
+        return;
+
+    await handlePlantCard(gameState, playerId, playerName, gameState.yourHand[0], false);
+}
+
+function getFieldValue(field: Field): number {
+
+    if (field.card.length === 0) {
+        return 0;
+    }
+
+    const cropSize = field.card.length;
+    const cardValue = field.card[0].exchangeMap.reduce((max, entry) => { max = entry.cropSize <= cropSize ? entry.value : max; return max; }, 0);
+    return cardValue;
+}
+
+async function handlePlantingOptional(gameState: GameState, playerId: string, playerName: string): Promise<void> {
+    // for (const card of gameState.yourHand) {
+    //     if (!card.firstCard) {
+    //         continue;
+    //     }
+
+    //     const targetField = gameState.players
+    //         .find(p => p.name === playerName)
+    //         ?.fields.find(field => field.card[0]?.type === card.type || field.card.length === 0);
+
+    //     if (targetField) {
+    //         await plantCard(gameState.name, playerId, targetField.key);
+    //         return;
+    //     }
+    // }
+    // console.log('Ingen mulighet for planting.');
+    console.log('Ikke implementert PlantingOptional');
+
+    await endPlanting(gameState.name, playerId);
+
+}
+
+async function handleTradePlanting(gameState: GameState, playerId: string, playerName: string): Promise<void> {
+    // for (const card of gameState.yourHand) {
+    //     if (!card.firstCard) {
+    //         continue;
+    //     }
+
+    //     const targetField = gameState.players
+    //         .find(p => p.name === playerName)
+    //         ?.fields.find(field => field.card[0]?.type === card.type || field.card.length === 0);
+
+    //     if (targetField) {
+    //         await plantCard(gameState.name, playerId, targetField.key);
+    //         return;
+    //     }
+    // }
+    // console.log('Ingen mulighet for planting.');
+    console.log('Ikke implementert TradePlanting');
+}
+
+async function handlePlantCard(gameState: GameState, playerId: string, playerName: string, card: Card, isTradePlanting: boolean = false): Promise<void> {
+    const targetField = gameState.players
+            .find(p => p.name === playerName)
             ?.fields.find(field => field.card[0]?.type === card.type || field.card.length === 0);
 
         if (targetField) {
-            await plantCard(gameState.name, playerId, targetField.key);
+            if (isTradePlanting) {
+                await tradePlantCard(gameState.name, playerId, targetField.key, card.id);
+            }
+            else { 
+                await plantCard(gameState.name, playerId, targetField.key);
+            }
             return;
         }
-    }
-    console.log('Ingen mulighet for planting.');
+
+        const fields = gameState.players.find(p => p.name === playerName)?.fields;
+
+        if (!fields) {
+            console.log('Fant ingen felt.');
+            return;
+        }
+
+        //Harvest field with largest value
+
+        let valueField0 = getFieldValue(fields[0]);
+        let valueField1 = getFieldValue(fields[1]);
+
+        if(valueField0 === valueField1)
+        {
+            if(fields[0].card[0].totalNumberOfType > fields[1].card[0].totalNumberOfType)
+            {
+                valueField0 += 1;
+            }
+            else {
+                valueField1 += 1;
+            }
+        }
+
+        if (valueField0 > valueField1) {
+            await harvestField(gameState.name, playerId, fields[0].key);
+
+            if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[0].key, card.id); }
+            else { await plantCard(gameState.name, playerId, fields[0].key); }
+        }
+        else if (valueField0 < valueField1) {
+            await harvestField(gameState.name, playerId, fields[1].key);
+            if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[1].key, card.id); }
+            else { await plantCard(gameState.name, playerId, fields[1].key); }
+        }
 }
+
+async function plantDrawnCards(gameState: GameState, playerId: string, playerName: string) {
+    for (const card of gameState.players.find(p => p.name === playerName)?.drawnCards || []) {
+        await handlePlantCard(gameState, playerId, playerName, card, true);
+    }
+}
+
+
 
 // Håndter høsting
 async function handleHarvesting(gameState: GameState, playerId: string): Promise<void> {
@@ -166,6 +268,22 @@ async function plantCard(gameName: string, playerId: string, fieldId: string): P
     }
 }
 
+async function tradePlantCard(gameName: string, playerId: string, fieldId: string, cardId: string): Promise<void> {
+    try {
+        const response = await axiosClient.get(`api/playing/trade-plant`, {
+            params: {
+                gameName,
+                playerId,
+                fieldId,
+                cardId
+            },
+        });
+        console.log(`Kort trade-plantet i spill ${gameName}, felt ${fieldId}.`);
+    } catch (error) {
+        console.error('Feil under trade-planting:', error);
+    }
+}
+
 // API-kall for å høste et felt
 async function harvestField(gameName: string, playerId: string, fieldId: string): Promise<void> {
     try {
@@ -181,6 +299,35 @@ async function harvestField(gameName: string, playerId: string, fieldId: string)
         console.error('Feil under høsting:', error);
     }
 }
+
+async function endPlanting(gameName: string, playerId: string): Promise<void> {
+    try {
+        const response = await axiosClient.get(`api/playing/end-planting`, {
+            params: {
+                gameName,
+                playerId
+            },
+        });
+        console.log(`Avsluttet planting.`);
+    } catch (error) {
+        console.error('Feil under avslutte planting:', error);
+    }
+}
+
+async function endTrading(gameName: string, playerId: string): Promise<void> {
+    try {
+        const response = await axiosClient.get(`api/playing/end-trading`, {
+            params: {
+                gameName,
+                playerId
+            },
+        });
+        console.log(`Avsluttet trading.`);
+    } catch (error) {
+        console.error('Feil under avslutte trading:', error);
+    }
+}
+
 
 // API-kall for å godta en handel
 async function acceptTrade(gameName: string, playerId: string, negotiationId: string): Promise<void> {
@@ -205,13 +352,13 @@ async function acceptTrade(gameName: string, playerId: string, negotiationId: st
 async function startBot(gameName: string, playerId: string, playerName: string): Promise<void> {
 
     try {
-        let gameState = await fetchGameState(gameName);
+        let gameState = await fetchGameState(gameName, playerId);
         // console.log('Spillstatus hentet:', gameState);
 
         while (gameState.currentState !== 'Playing') {
             console.log('Spillet er ikke i gang.');
             await new Promise(resolve => setTimeout(resolve, 5000));
-            gameState = await fetchGameState(gameName);
+            gameState = await fetchGameState(gameName, playerId);
         }
 
         while(gameState.currentState === 'Playing')
@@ -227,7 +374,7 @@ async function startBot(gameName: string, playerId: string, playerName: string):
                 await takeTurn(gameState, playerId, playerName);
             }
            
-            gameState = await fetchGameState(gameName);
+            gameState = await fetchGameState(gameName, playerId);
         }
 
         console.log('Spillstatus hentet:', gameState.currentState);
@@ -239,3 +386,4 @@ async function startBot(gameName: string, playerId: string, playerName: string):
 
 // Start roboten
 startBot(gameName, playerId, playerName);
+

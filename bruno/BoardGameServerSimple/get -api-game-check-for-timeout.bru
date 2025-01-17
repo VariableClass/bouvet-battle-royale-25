@@ -1,15 +1,15 @@
 meta {
   name: get -api-game-check-for-timeout
   type: http
-  seq: 5
+  seq: 6
 }
 
 get {
-  url: {{baseUrl}}/api/game/check-for-timeout
+  url: {{baseUrl}}/api/game/check-for-timeout?gameName={{game}}
   body: none
   auth: none
 }
 
 params:query {
-  gameName: 
+  gameName: {{game}}
 }

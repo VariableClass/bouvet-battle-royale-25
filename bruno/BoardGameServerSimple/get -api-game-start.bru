@@ -1,15 +1,15 @@
 meta {
   name: get -api-game-start
   type: http
-  seq: 4
+  seq: 5
 }
 
 get {
-  url: {{baseUrl}}/api/game/start
+  url: {{baseUrl}}/api/game/start?gameName={{game}}
   body: none
   auth: none
 }
 
 params:query {
-  gameName: 
+  gameName: {{game}}
 }

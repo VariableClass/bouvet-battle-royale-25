@@ -5,12 +5,12 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/game
+  url: {{baseUrl}}/api/game?gameName={{game}}
   body: none
   auth: none
 }
 
 params:query {
-  gameName: 
-  ~playerId: 
+  gameName: {{game}}
+  ~playerId: {{playerId}}
 }

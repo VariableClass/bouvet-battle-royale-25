@@ -1,0 +1,17 @@
+meta {
+  name: get -api-game-join-player2
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/game/join?gameName={{game}}&name=player2&playerKey={{player2Id}}
+  body: none
+  auth: none
+}
+
+params:query {
+  gameName: {{game}}
+  name: player2
+  playerKey: {{player2Id}}
+}

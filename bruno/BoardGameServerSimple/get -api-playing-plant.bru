@@ -1,17 +1,17 @@
 meta {
   name: get -api-playing-plant
   type: http
-  seq: 8
+  seq: 9
 }
 
 get {
-  url: {{baseUrl}}/api/playing/plant
+  url: {{baseUrl}}/api/playing/plant?gameName={{game}}&playerId={{playerId}}&fieldId=9c7f3a7f-fffc-4546-b771-40a43efedb42
   body: none
   auth: none
 }
 
 params:query {
-  gameName: 
-  playerId: 
-  fieldId: 
+  gameName: {{game}}
+  playerId: {{playerId}}
+  fieldId: 9c7f3a7f-fffc-4546-b771-40a43efedb42
 }

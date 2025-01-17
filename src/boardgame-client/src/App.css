@@ -40,3 +40,11 @@
 .read-the-docs {
   color: #888;
 }
+
+.top-nav {
+  position: fixed;
+  top: 0;
+  background-color: white; /* Optional: Set a background color */
+  padding: 10px; /* Optional: Add some padding */
+  z-index: 1000; /* Ensure the nav stays on top of other elements */
+}

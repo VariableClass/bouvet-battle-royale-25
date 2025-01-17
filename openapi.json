@@ -1,0 +1,1027 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "BoardGameServerSimple | v1",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://localhost:7046"
+    },
+    {
+      "url": "http://localhost:5186"
+    }
+  ],
+  "paths": {
+    "/api/game/all": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "playerId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GameStateDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/game": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameStateDto2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/game/join": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/game/start": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/game/check-for-timeout": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/game/stop": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/score/get": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "integer",
+                    "format": "int32"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/plant": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fieldId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/end-planting": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/end-trading": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/trade-plant": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "cardId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fieldId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/harvest-field": {
+      "get": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "fieldId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/request-trade": {
+      "post": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfferDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/playing/accept-trade": {
+      "post": {
+        "tags": [
+          "BoardGameServerSimple"
+        ],
+        "parameters": [
+          {
+            "name": "gameName",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "playerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Accept"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HttpValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Accept": {
+        "type": "object",
+        "properties": {
+          "negotiationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payment": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "Card": {
+        "type": "object"
+      },
+      "CardDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "exchangeMap": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExchangeMapEntry"
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "required": [
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ExchangeMapEntry": {
+        "type": "object",
+        "properties": {
+          "cropSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "FieldDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "card": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CardDto"
+            }
+          }
+        }
+      },
+      "GameStateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "currentPlayer": {
+            "type": "string"
+          },
+          "currentPhase": {
+            "type": "string"
+          },
+          "currentState": {
+            "type": "string"
+          },
+          "round": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "phaseTimeLeft": {
+            "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+            "type": "string"
+          },
+          "phaseEndTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastStateChange": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deck": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "availableTrades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TradeDto"
+            }
+          },
+          "discardPile": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            }
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerDto"
+            }
+          },
+          "yourHand": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HandCardDto"
+            }
+          }
+        }
+      },
+      "GameStateDto2": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "currentPlayer": {
+            "type": "string"
+          },
+          "currentPhase": {
+            "type": "string"
+          },
+          "currentState": {
+            "type": "string"
+          },
+          "round": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "phaseTimeLeft": {
+            "pattern": "^-?(\\d+\\.)?\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?$",
+            "type": "string"
+          },
+          "phaseEndTimestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastStateChange": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deck": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "availableTrades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TradeDto"
+            }
+          },
+          "discardPile": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Card"
+            }
+          },
+          "players": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PlayerDto2"
+            }
+          },
+          "yourHand": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HandCardDto2"
+            }
+          }
+        }
+      },
+      "HandCardDto": {
+        "type": "object",
+        "properties": {
+          "firstCard": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "exchangeMap": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/items/properties/players/items/properties/fields/items/properties/card/items/properties/exchangeMap/items"
+            }
+          }
+        }
+      },
+      "HandCardDto2": {
+        "type": "object",
+        "properties": {
+          "firstCard": {
+            "type": "boolean"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "exchangeMap": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/properties/players/items/properties/fields/items/properties/card/items/properties/exchangeMap/items"
+            }
+          }
+        }
+      },
+      "HttpValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "OfferDto": {
+        "type": "object",
+        "properties": {
+          "offeredCards": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "cardTypesWanted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PlayerDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "coins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDto"
+            }
+          },
+          "hand": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "drawnCards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/items/properties/players/items/properties/fields/items/properties/card/items"
+            }
+          },
+          "tradedCards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/items/properties/players/items/properties/fields/items/properties/card/items"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PlayerDto2": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "coins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDto"
+            }
+          },
+          "hand": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "drawnCards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/properties/players/items/properties/fields/items/properties/card/items"
+            }
+          },
+          "tradedCards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/#/properties/players/items/properties/fields/items/properties/card/items"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TradeDto": {
+        "type": "object",
+        "properties": {
+          "initiatorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "negotiationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "offeredCards": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cardTypesWanted": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "BoardGameServerSimple"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 import {useState} from 'react'
 import './Connect.css'
 import {useAtom} from "jotai";
-import {gameIdAtom, nameAtom} from "../state/store.tsx";
+import {gameIdAtom, nameAtom, playerKeyAtom} from "../state/store.tsx";
 import {useNavigate} from "react-router-dom";
 
 function ConnectPage() {
@@ -45,10 +45,11 @@ function ConnectPage() {
     }
 
     const [games, setGames] = useState<Game[]>([])
-    const [apiError, setApiError] = useState<ApiError>();
+    const [apiError, setApiError] = useState<ApiError>()
 
-    const [name,] = useAtom(nameAtom);
-    const [,setGameId] = useAtom(gameIdAtom);
+    const [name,] = useAtom(nameAtom)
+    const [,setGameId] = useAtom(gameIdAtom)
+    const [playerKey,] = useAtom(playerKeyAtom)
 
     const navigate = useNavigate()
 
@@ -67,7 +68,7 @@ function ConnectPage() {
     }
 
     const connect = (gameName: string) => {
-        const params = new URLSearchParams({ gameName, name })
+        const params = new URLSearchParams({ gameName, name, playerKey })
         return fetch(`https://localhost:7046/api/game/join?${params}`).then((response) => {
             if (!response.ok) {
                 return response.json().then((error: ApiError) => {

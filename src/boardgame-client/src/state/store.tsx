@@ -1,3 +1,5 @@
 import { atom } from 'jotai';
 
-export const nameAtom = atom<string>('');
+export const nameAtom = atom('olav');
+
+export const gameIdAtom = atom<string>();

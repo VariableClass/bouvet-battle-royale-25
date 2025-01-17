@@ -1,7 +1,8 @@
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import './Connect.css'
-import {useAtomValue} from "jotai";
-import {nameAtom} from "../state/store.tsx";
+import {useAtom} from "jotai";
+import {gameIdAtom, nameAtom} from "../state/store.tsx";
+import {useNavigate} from "react-router-dom";
 
 function ConnectPage() {
     interface Game {
@@ -46,9 +47,10 @@ function ConnectPage() {
     const [games, setGames] = useState<Game[]>([])
     const [apiError, setApiError] = useState<ApiError>();
 
-    const [name] = useAtomValue<string>(nameAtom);
+    const [name,] = useAtom(nameAtom);
+    const [,setGameId] = useAtom(gameIdAtom);
 
-    useEffect(() => {console.log(name)}, [name])
+    const navigate = useNavigate()
 
     const search = () => {
         return fetch("https://localhost:7046/api/game/all").then((response) => {
@@ -75,10 +77,9 @@ function ConnectPage() {
             return response.json()
         })
         .then((gameId) => {
-            console.log(gameId)
-            search()
+            setGameId(gameId);
+            navigate("/game");
         }).catch((error: ApiError) => {
-            console.log(error)
             setApiError(error)
         })
     }

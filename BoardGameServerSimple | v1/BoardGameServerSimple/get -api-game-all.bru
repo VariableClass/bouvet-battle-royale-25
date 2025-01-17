@@ -1,0 +1,15 @@
+meta {
+  name: get -api-game-all
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/game/all
+  body: none
+  auth: none
+}
+
+params:query {
+  ~playerId: 
+}

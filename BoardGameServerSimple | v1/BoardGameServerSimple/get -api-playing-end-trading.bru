@@ -1,0 +1,16 @@
+meta {
+  name: get -api-playing-end-trading
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/playing/end-trading
+  body: none
+  auth: none
+}
+
+params:query {
+  gameName: 
+  playerId: 
+}

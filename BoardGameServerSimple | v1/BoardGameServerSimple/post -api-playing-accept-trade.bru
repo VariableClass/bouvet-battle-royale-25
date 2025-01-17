@@ -1,0 +1,23 @@
+meta {
+  name: post -api-playing-accept-trade
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/api/playing/accept-trade
+  body: json
+  auth: none
+}
+
+params:query {
+  gameName: 
+  playerId: 
+}
+
+body:json {
+  {
+    "negotiationId": "",
+    "payment": []
+  }
+}

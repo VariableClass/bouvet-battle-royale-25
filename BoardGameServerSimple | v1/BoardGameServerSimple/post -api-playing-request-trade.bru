@@ -1,0 +1,23 @@
+meta {
+  name: post -api-playing-request-trade
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/api/playing/request-trade
+  body: json
+  auth: none
+}
+
+params:query {
+  gameName: 
+  playerId: 
+}
+
+body:json {
+  {
+    "offeredCards": [],
+    "cardTypesWanted": []
+  }
+}

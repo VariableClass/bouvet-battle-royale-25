@@ -1,37 +1,11 @@
 import {useState} from 'react'
 import './Connect.css'
 import {useAtom} from "jotai";
-import {gameIdAtom, nameAtom, playerKeyAtom} from "../state/store.tsx";
+import {playerIdAtom, GameState, nameAtom, playerKeyAtom, gameNameAtom} from "../state/store.tsx";
 import {useNavigate} from "react-router-dom";
 import { Button } from "@/components/ui/button"
 
 function ConnectPage() {
-    interface Game {
-        name: string;
-        currentPlayer: string;
-        currentPhase: string;
-        currentState: string;
-        round: number;
-        phaseTimeLeft: string;
-        phaseEndTimestamp: string;
-        lastStateChange: string;
-        deck: number;
-        availableTrades: any[];
-        discardPile: any[];
-        players: Player[];
-        yourHand: any[];
-    }
-
-    interface Player {
-        name: string,
-        coins: number,
-        fields: [],
-        hand: 0,
-        drawnCards: [],
-        tradedCards: [],
-        isActive: true
-    }
-
     interface ValidationError {
         [key: string]: string[];
     }
@@ -45,11 +19,12 @@ function ConnectPage() {
         errors: ValidationError;
     }
 
-    const [games, setGames] = useState<Game[]>([])
+    const [games, setGames] = useState<GameState[]>([])
     const [apiError, setApiError] = useState<ApiError>()
 
     const [name,] = useAtom(nameAtom)
-    const [,setGameId] = useAtom(gameIdAtom)
+    const [,setPlayerId] = useAtom(playerIdAtom)
+    const [,setGameName] = useAtom(gameNameAtom)
     const [playerKey,] = useAtom(playerKeyAtom)
 
     const navigate = useNavigate()
@@ -79,7 +54,8 @@ function ConnectPage() {
             return response.json()
         })
         .then((gameId) => {
-            setGameId(gameId);
+            setGameName(gameName);
+            setPlayerId(gameId);
             navigate("/game");
         }).catch((error: ApiError) => {
             setApiError(error)

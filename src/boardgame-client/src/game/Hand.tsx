@@ -1,29 +1,21 @@
-import {useAtomValue} from "jotai";
-import {gameIdAtom} from "../state/store.tsx";
-import {startGame} from "./engine.tsx";
-import {useState} from "react";
 import {
     Drawer,
-    DrawerClose,
     DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
     DrawerHeader,
     DrawerTitle,
-    DrawerTrigger,
+    DrawerTrigger
   } from "@/components/ui/drawer"
-import {
-    Button,
-    } from "@/components/ui/button"
 import {
     Carousel,
     CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
+    CarouselItem
   } from "@/components/ui/carousel"
+import {gameStateAtom} from "../state/store.tsx";
+import {useAtomValue} from "jotai";
 
 function HandComponent() {
+    const hand = useAtomValue(gameStateAtom).yourHand;
+
     return (
         <Drawer>
             <DrawerTrigger>Open</DrawerTrigger>

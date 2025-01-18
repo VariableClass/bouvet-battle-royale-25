@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://localhost:7046';
+const BASE_URL = 'https://bbr25-backend-bpacbhhzbdcsdfez.canadacentral-01.azurewebsites.net';
 
 export const getAllGames = async (playerId?: string) => {
     const response = await axios.get(`${BASE_URL}/api/game/all`, {

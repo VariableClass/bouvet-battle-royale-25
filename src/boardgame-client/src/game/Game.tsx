@@ -12,7 +12,7 @@ function GamePage() {
     const playerName = useAtomValue(nameAtom)
     const [gameState, updateGameState] = useAtom(gameStateAtom);
 
-    const API_BASE_URL = 'https://localhost:7046'; // Endre til riktig URL hvis nødvendig
+    const API_BASE_URL = 'https://bbr25-backend-bpacbhhzbdcsdfez.canadacentral-01.azurewebsites.net'; // Endre til riktig URL hvis nødvendig
 
     const axiosClient = axios.create({
         baseURL: API_BASE_URL
@@ -300,18 +300,18 @@ function GamePage() {
     async function startBot(): Promise<void> {
 
         try {
-            updateGameState(await fetchGameState(gameName, playerId));
+            let state = await fetchGameState(gameName, playerId);
             // console.log('Spillstatus hentet:', gameState);
 
-            while (!gameState || gameState.currentState !== 'Playing') {
+            while (state.currentState !== 'Playing') {
                 console.log('Spillet er ikke i gang.');
                 await new Promise(resolve => setTimeout(resolve, 5000));
-                updateGameState(await fetchGameState(gameName, playerId));
+                state = await fetchGameState(gameName, playerId);
             }
 
-            while(gameState.currentState === 'Playing')
+            while(state.currentState === 'Playing')
             {
-                if(gameState.currentPlayer !== playerName)
+                if(state.currentPlayer !== playerName)
                 {
                     console.log('Det er ikke din tur ennå.');
                     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -319,13 +319,13 @@ function GamePage() {
                 else
                 {
                     // Ta en tur basert på spillstatus
-                    await takeTurn(gameState, playerId, playerName);
+                    await takeTurn(state, playerId, playerName);
                 }
 
-                updateGameState(await fetchGameState(gameName, playerId));
+                state = await fetchGameState(gameName, playerId);
             }
 
-            console.log('Spillstatus hentet:', gameState.currentState);
+            console.log('Spillstatus hentet:', state.currentState);
 
         } catch (error) {
             console.error('Feil under henting av spillstatus:', error);

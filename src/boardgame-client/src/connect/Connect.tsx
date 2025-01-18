@@ -30,7 +30,7 @@ function ConnectPage() {
     const navigate = useNavigate()
 
     const search = () => {
-        return fetch("https://localhost:7046/api/game/all").then((response) => {
+        return fetch("https://bbr25-backend-bpacbhhzbdcsdfez.canadacentral-01.azurewebsites.net/api/game/all").then((response) => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -45,7 +45,7 @@ function ConnectPage() {
 
     const connect = (gameName: string) => {
         const params = new URLSearchParams({ gameName, name, playerKey })
-        return fetch(`https://localhost:7046/api/game/join?${params}`).then((response) => {
+        return fetch(`https://bbr25-backend-bpacbhhzbdcsdfez.canadacentral-01.azurewebsites.net/api/game/join?${params}`).then((response) => {
             if (!response.ok) {
                 return response.json().then((error: ApiError) => {
                     throw error;

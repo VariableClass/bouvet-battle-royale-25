@@ -3,6 +3,8 @@ import {Link, Route, BrowserRouter as Router, Routes} from "react-router-dom";
 import ConnectPage from "./connect/Connect.tsx";
 import RegisterPage from "./connect/Register.tsx";
 import GamePage from "./game/Game.tsx";
+import TableComponent from './game/Table.tsx';
+import HandComponent from './game/Hand.tsx';
 import {Provider} from "jotai";
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
                     <Route path="/" element={<RegisterPage />} />
                     <Route path="/connect" element={<ConnectPage />} />
                     <Route path="/game" element={<GamePage />} />
+                    <Route path="/table" element={<TableComponent />} />
+                    <Route path="/hand" element={<HandComponent />} />
                 </Routes>
             </Router>
         </Provider>

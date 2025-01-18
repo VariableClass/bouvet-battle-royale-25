@@ -3,6 +3,7 @@ import './Connect.css'
 import {useAtom} from "jotai";
 import {gameIdAtom, nameAtom, playerKeyAtom} from "../state/store.tsx";
 import {useNavigate} from "react-router-dom";
+import { Button } from "@/components/ui/button"
 
 function ConnectPage() {
     interface Game {
@@ -89,9 +90,9 @@ function ConnectPage() {
         <>
             <p>Name: {name}</p>
             <div className="card">
-                <button onClick={() => search()}>
+                <Button onClick={() => search()}>
                     Look for games
-                </button>
+                </Button>
             </div>
             {
                 games.length > 0 &&
@@ -110,7 +111,7 @@ function ConnectPage() {
                             <td>{game.currentState}</td>
                             <td>{game.players.map(player => player.name).join('\n')}</td>
                             <td>
-                                <button onClick={() => connect(game.name)}>Join</button>
+                                <Button onClick={() => connect(game.name)}>Join</Button>
                             </td>
                         </tr>
                     ))}

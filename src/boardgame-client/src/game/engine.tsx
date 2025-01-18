@@ -1,6 +1,5 @@
 // Importer nødvendige biblioteker
 import axios from 'axios';
-import https from 'https';
 
 // Konfigurasjon for API-klienten
 const API_BASE_URL = 'https://localhost:7046'; // Endre til riktig URL hvis nødvendig
@@ -11,10 +10,7 @@ const playerName = 'player1'; // Sett riktig spiller-navn
 
 
 const axiosClient = axios.create({
-    baseURL: API_BASE_URL,
-    httpsAgent: new https.Agent({
-      rejectUnauthorized: false,
-    }),
+    baseURL: API_BASE_URL
   });
 
 
@@ -385,5 +381,7 @@ async function startBot(gameName: string, playerId: string, playerName: string):
 }
 
 // Start roboten
-startBot(gameName, playerId, playerName);
+//startBot(gameName, playerId, playerName);
+
+export const startGame = () => startBot(gameName, playerId, playerName)
 

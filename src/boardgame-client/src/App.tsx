@@ -12,7 +12,7 @@ function App() {
         <Provider>
             <Router>
                 <nav className="top-nav">
-                    <Link to="/">Reset</Link>
+                    <Link to="/">Back to start</Link>
                 </nav>
                 <Routes>
                     <Route path="/" element={<RegisterPage />} />

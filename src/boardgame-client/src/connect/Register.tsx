@@ -1,7 +1,8 @@
 import {useNavigate} from "react-router-dom";
 import {useAtom} from "jotai";
 import {nameAtom} from "../state/store.tsx";
-import React from "react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 function RegisterPage() {
     const [name, setName] = useAtom(nameAtom);
@@ -9,14 +10,13 @@ function RegisterPage() {
 
     return (
         <>
-            <h3>Name: <input type="text" value={name} onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                console.log(e.target.value)
+            <h3>Name: <Input type="text" value={name} onChange={(e) => {
                 setName(e.target.value)
             }}/></h3>
             <div className="card">
-                <button onClick={() => navigate("/connect")}>
+                <Button onClick={() => navigate("/connect")}>
                     Submit
-                </button>
+                </Button>
             </div>
         </>
     )

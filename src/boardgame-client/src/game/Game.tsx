@@ -3,6 +3,7 @@ import {gameNameAtom, GameState, gameStateAtom, nameAtom, playerIdAtom} from "..
 import { Button } from "@/components/ui/button"
 import {useState} from "react";
 import axios from "axios";
+import Hand from "./Hand.tsx";
 
 function GamePage() {
     const [running, setRunning] = useState<boolean>(false)
@@ -151,6 +152,21 @@ function GamePage() {
         let valueField0 = getFieldValue(fields[0]);
         let valueField1 = getFieldValue(fields[1]);
 
+        if (fields[0].card.length == 1 && fields[1].card.length > 1) {
+            await harvestField(gameState.name, playerId, fields[1].key);
+            gameState = await fetchGameState(gameName, playerId)
+            if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[1].key, card.id); }
+            else { await plantCard(gameState.name, playerId, fields[1].key); }
+            return;
+        }
+        if (fields[1].card.length == 1 && fields[0].card.length > 1) {
+            await harvestField(gameState.name, playerId, fields[0].key);
+            gameState = await fetchGameState(gameName, playerId)
+            if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[0].key, card.id); }
+            else { await plantCard(gameState.name, playerId, fields[0].key); }
+            return;
+        }
+
         if(valueField0 === valueField1)
         {
             if(fields[0].card[0].totalNumberOfType > fields[1].card[0].totalNumberOfType)
@@ -177,7 +193,8 @@ function GamePage() {
 
     async function plantDrawnCards(gameState: GameState, playerId: string, playerName: string) {
         for (const card of gameState.players.find(p => p.name === playerName)?.drawnCards || []) {
-            await handlePlantCard(gameState, playerId, playerName, card, true);
+            const state = await fetchGameState(gameName, playerId);
+            await handlePlantCard(state, playerId, playerName, card, true);
         }
     }
 
@@ -301,12 +318,14 @@ function GamePage() {
 
         try {
             let state = await fetchGameState(gameName, playerId);
+            updateGameState(state)
             // console.log('Spillstatus hentet:', gameState);
 
             while (state.currentState !== 'Playing') {
-                console.log('Spillet er ikke i gang.');
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                state = await fetchGameState(gameName, playerId);
+                console.log('Spillet er ikke i gang.')
+                await new Promise(resolve => setTimeout(resolve, 5000))
+                state = await fetchGameState(gameName, playerId)
+                updateGameState(state)
             }
 
             while(state.currentState === 'Playing')
@@ -323,6 +342,7 @@ function GamePage() {
                 }
 
                 state = await fetchGameState(gameName, playerId);
+                updateGameState(state);
             }
 
             console.log('Spillstatus hentet:', state.currentState);
@@ -339,6 +359,7 @@ function GamePage() {
                 setRunning(true)
                 startBot()
             }}>Start game</Button>) }
+            { running && gameState && (<Hand/>)}
         </>
     )
 }

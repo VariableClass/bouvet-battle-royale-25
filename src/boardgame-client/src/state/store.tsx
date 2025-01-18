@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-export const nameAtom = atom('Mr. Bohnd');
+export const nameAtom = atom('NoTradeNancy');
 export const playerIdAtom = atom<string>('');
 export const gameNameAtom = atom<string>('');
 export const playerKeyAtom = atom<string>('a4afe88b-7d8a-4feb-b98f-064a22e30848');

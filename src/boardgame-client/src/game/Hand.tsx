@@ -30,6 +30,7 @@ function HandComponent() {
                         }}>
                     <Carousel>
                         <CarouselContent>
+                            { hand.map(card => (<p>{card.id} {card.type} {card.totalNumberOfType}</p>))}
                             <CarouselItem className="md:basis-1/5 lg:basis-1/5"><img src="src/assets/soybean.jpg" /></CarouselItem>
                             <CarouselItem className="md:basis-1/5 lg:basis-1/5"><img src="src/assets/greenbean.jpg" /></CarouselItem>
                             <CarouselItem className="md:basis-1/5 lg:basis-1/5"><img src="src/assets/stinkbean.jpg" /></CarouselItem>

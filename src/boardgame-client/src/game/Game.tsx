@@ -19,6 +19,16 @@ function GamePage() {
         baseURL: API_BASE_URL
     });
 
+    axiosClient.interceptors.response.use(
+        async response => {
+            await new Promise(resolve => setTimeout(resolve, 500)); // 1-second delay
+            return response;
+        },
+        error => {
+            return Promise.reject(error);
+        }
+    );
+
 // Hent spillstatus
     async function fetchGameState(gameName: string, playerId: string): Promise<GameState> {
         const response = await axiosClient.get(`api/game`, {
@@ -154,14 +164,12 @@ function GamePage() {
 
         if (fields[0].card.length == 1 && fields[1].card.length > 1) {
             await harvestField(gameState.name, playerId, fields[1].key);
-            gameState = await fetchGameState(gameName, playerId)
             if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[1].key, card.id); }
             else { await plantCard(gameState.name, playerId, fields[1].key); }
             return;
         }
         if (fields[1].card.length == 1 && fields[0].card.length > 1) {
             await harvestField(gameState.name, playerId, fields[0].key);
-            gameState = await fetchGameState(gameName, playerId)
             if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[0].key, card.id); }
             else { await plantCard(gameState.name, playerId, fields[0].key); }
             return;

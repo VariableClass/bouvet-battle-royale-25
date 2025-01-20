@@ -3,6 +3,7 @@ import {gameNameAtom, GameState, gameStateAtom, nameAtom, playerIdAtom} from "..
 import { Button } from "@/components/ui/button"
 import {useState} from "react";
 import axios from "axios";
+import Hand from "./Hand.tsx";
 
 function GamePage() {
     const [running, setRunning] = useState<boolean>(false)
@@ -12,11 +13,21 @@ function GamePage() {
     const playerName = useAtomValue(nameAtom)
     const [gameState, updateGameState] = useAtom(gameStateAtom);
 
-    const API_BASE_URL = 'https://localhost:7046'; // Endre til riktig URL hvis nødvendig
+    const API_BASE_URL = 'https://bbr25-backend-bpacbhhzbdcsdfez.canadacentral-01.azurewebsites.net'; // Endre til riktig URL hvis nødvendig
 
     const axiosClient = axios.create({
         baseURL: API_BASE_URL
     });
+
+    axiosClient.interceptors.response.use(
+        async response => {
+            await new Promise(resolve => setTimeout(resolve, 500)); // 1-second delay
+            return response;
+        },
+        error => {
+            return Promise.reject(error);
+        }
+    );
 
 // Hent spillstatus
     async function fetchGameState(gameName: string, playerId: string): Promise<GameState> {
@@ -151,6 +162,19 @@ function GamePage() {
         let valueField0 = getFieldValue(fields[0]);
         let valueField1 = getFieldValue(fields[1]);
 
+        if (fields[0].card.length == 1 && fields[1].card.length > 1) {
+            await harvestField(gameState.name, playerId, fields[1].key);
+            if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[1].key, card.id); }
+            else { await plantCard(gameState.name, playerId, fields[1].key); }
+            return;
+        }
+        if (fields[1].card.length == 1 && fields[0].card.length > 1) {
+            await harvestField(gameState.name, playerId, fields[0].key);
+            if(isTradePlanting) { await tradePlantCard(gameState.name, playerId, fields[0].key, card.id); }
+            else { await plantCard(gameState.name, playerId, fields[0].key); }
+            return;
+        }
+
         if(valueField0 === valueField1)
         {
             if(fields[0].card[0].totalNumberOfType > fields[1].card[0].totalNumberOfType)
@@ -177,7 +201,8 @@ function GamePage() {
 
     async function plantDrawnCards(gameState: GameState, playerId: string, playerName: string) {
         for (const card of gameState.players.find(p => p.name === playerName)?.drawnCards || []) {
-            await handlePlantCard(gameState, playerId, playerName, card, true);
+            const state = await fetchGameState(gameName, playerId);
+            await handlePlantCard(state, playerId, playerName, card, true);
         }
     }
 
@@ -300,18 +325,20 @@ function GamePage() {
     async function startBot(): Promise<void> {
 
         try {
-            updateGameState(await fetchGameState(gameName, playerId));
+            let state = await fetchGameState(gameName, playerId);
+            updateGameState(state)
             // console.log('Spillstatus hentet:', gameState);
 
-            while (!gameState || gameState.currentState !== 'Playing') {
-                console.log('Spillet er ikke i gang.');
-                await new Promise(resolve => setTimeout(resolve, 5000));
-                updateGameState(await fetchGameState(gameName, playerId));
+            while (state.currentState !== 'Playing') {
+                console.log('Spillet er ikke i gang.')
+                await new Promise(resolve => setTimeout(resolve, 5000))
+                state = await fetchGameState(gameName, playerId)
+                updateGameState(state)
             }
 
-            while(gameState.currentState === 'Playing')
+            while(state.currentState === 'Playing')
             {
-                if(gameState.currentPlayer !== playerName)
+                if(state.currentPlayer !== playerName)
                 {
                     console.log('Det er ikke din tur ennå.');
                     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -319,13 +346,14 @@ function GamePage() {
                 else
                 {
                     // Ta en tur basert på spillstatus
-                    await takeTurn(gameState, playerId, playerName);
+                    await takeTurn(state, playerId, playerName);
                 }
 
-                updateGameState(await fetchGameState(gameName, playerId));
+                state = await fetchGameState(gameName, playerId);
+                updateGameState(state);
             }
 
-            console.log('Spillstatus hentet:', gameState.currentState);
+            console.log('Spillstatus hentet:', state.currentState);
 
         } catch (error) {
             console.error('Feil under henting av spillstatus:', error);
@@ -339,6 +367,7 @@ function GamePage() {
                 setRunning(true)
                 startBot()
             }}>Start game</Button>) }
+            { running && gameState && (<Hand/>)}
         </>
     )
 }
